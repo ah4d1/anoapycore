@@ -11,8 +11,8 @@ PROJECT DETAILS :
 Started     : 7th May 2021
 Website     : http://anoa-projects.com
 Source Code : https://github.com/ah4d1/anoapycore
-  - dev     : Code of on-going development.
-  - src     : Code of the latest release version.
+  - src         : Code of on-going development.
+  - src-release : Code of the latest release version.
 
 
 DISCLAIMER :
