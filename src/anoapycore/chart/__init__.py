@@ -31,3 +31,10 @@ def scatterplot (a_data,a_column_x,a_column_y,a_column_by="") :
     else :
         loc_result = __sns.lmplot(data=a_data,x=a_column_x,y=a_column_y,col=a_column_by)
     result = loc_result
+
+def correlation (a_data) :
+    """
+    Correlation plot
+    """
+    loc_corr = a_data.corr()
+    result = __sns.heatmap(loc_corr, cmap = 'Wistia', annot= True);
