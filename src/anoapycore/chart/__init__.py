@@ -6,6 +6,7 @@ import multipledispatch as __dispatch
 
 from . import boxplot
 from . import correlation
+from . import density
 from . import histogram
 from . import scatterplot
 

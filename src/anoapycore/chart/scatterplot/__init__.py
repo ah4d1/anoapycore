@@ -13,5 +13,5 @@ def show (a_data,a_column_x,a_column_y,a_column_by="") :
         loc_result = __sns.lmplot(data=a_data,x=a_column_x,y=a_column_y)
     else :
         loc_result = __sns.lmplot(data=a_data,x=a_column_x,y=a_column_y,col=a_column_by)
-    result = loc_result
+    return loc_result
 
