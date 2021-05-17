@@ -1,0 +1,4 @@
+Source of the data:
+------------------------------------
+titanic-*.csv : https://www.kaggle.com/c/titanic/data
+
