@@ -4,9 +4,12 @@ import numpy as __np
 from sklearn.cluster import KMeans as __model
 from kneed import KneeLocator as __find_k
 import matplotlib.pyplot as __plt
+from mpl_toolkits import mplot3d as __plt3d
+from IPython import get_ipython as __ipython
 
 class __result :
     centroids = None # cluster centers
+    columns = None # list of columns
     elbow_chart = None
     label = [] # filtered label of clusters
     labels = None # predict the labels of clusters
@@ -37,6 +40,7 @@ def run (a_data,a_features,a_max_clusters_to_try=11) :
     loc_elbow_chart = __elbow_chart(a_max_clusters_to_try,loc_sse)
     # get result
     loc_result = __result()
+    loc_result.columns = a_features
     loc_result.centroids = loc_model.cluster_centers_
     loc_result.elbow_chart = loc_elbow_chart 
     loc_result.label = loc_label
@@ -62,5 +66,29 @@ def plot (a_model,a_column_x,a_column_y) :
     __plt.ylabel(a_column_y)
     for i in a_model.labels_unique :
         __plt.scatter(a_model.label[i][:][a_column_x],a_model.label[i][:][a_column_y],label=i)
+        __plt.scatter(a_model.centroids[i][:][a_model.columns.index(a_column_x)], \
+            a_model.centroids[i][:][a_model.columns.index(a_column_y)], s = 80, color = 'black')
     __plt.legend()
     __plt.show()    
+
+def plots (a_model) :    
+    for loc_column_x in a_model.columns :
+        for loc_column_y in a_model.columns :
+            if loc_column_x != loc_column_y :
+                plot(a_model,loc_column_x,loc_column_y)
+
+def plot3d (a_model,a_column_x,a_column_y,a_column_z) :    
+    __ipython().run_line_magic('matplotlib', 'notebook') # %matplotlib notebook
+    loc_fig = __plt.figure()
+    loc_ax = loc_fig.add_subplot(111,projection='3d')
+    for i in a_model.labels_unique :
+        loc_ax.scatter(a_model.label[i][:][a_column_x],a_model.label[i][:][a_column_y], \
+            a_model.label[i][:][a_column_z],label=i,cmap='Set2')
+        loc_ax.scatter(a_model.centroids[i][:][a_model.columns.index(a_column_x)],a_model.centroids[i][:][a_model.columns.index(a_column_y)], \
+            a_model.centroids[i][:][a_model.columns.index(a_column_z)],cmap='Set2',s=80,color='black')
+    loc_ax.legend()
+    loc_ax.set_xlabel(a_column_x)
+    loc_ax.set_ylabel(a_column_y)
+    loc_ax.set_zlabel(a_column_z)
+    __plt.show()    
+
