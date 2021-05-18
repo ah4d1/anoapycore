@@ -1,4 +1,0 @@
-Source of the data:
-------------------------------------
-titanic : https://www.kaggle.com/c/titanic/data
-
