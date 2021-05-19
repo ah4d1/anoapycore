@@ -8,3 +8,5 @@ from . import support_vector_classifier
 from . import linear_regression
 # clustering
 from . import clustering
+# association
+from . import association
