@@ -1,5 +1,3 @@
-# ml
-
 import sklearn.linear_model as __log_reg
 import sklearn.metrics as __metrics
 import matplotlib.pyplot as __plt

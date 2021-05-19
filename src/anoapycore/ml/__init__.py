@@ -1,9 +1,7 @@
-# ml
-
+# data
 from . import data
 # classification
-from . import logistic_regression
-from . import support_vector_classifier
+from . import classification
 # regression
 from . import linear_regression
 # clustering

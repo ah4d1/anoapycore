@@ -1,5 +1,3 @@
-# ml
-
 import sklearn.svm as __svm
 
 class __result :
