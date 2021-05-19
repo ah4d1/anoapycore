@@ -1,4 +1,5 @@
 from . import load
+from . import value
 from . import column
 from . import row
 from . import stat
@@ -8,4 +9,5 @@ def dimension (a_dataframe) :
        
 def sample (a_data,a_row=5) :
     return a_data.head(a_row)
+    
 
