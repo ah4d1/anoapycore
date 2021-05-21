@@ -3,7 +3,7 @@ from . import data
 # classification
 from . import classification
 # regression
-from . import linear_regression
+from . import regression
 # clustering
 from . import clustering
 # association
