@@ -7,7 +7,7 @@ from . import stat
 from . import value
 
 import pandas as __pd
-from sklearn.preprocessing import MinMaxScaler as _minmax
+from sklearn.preprocessing import MinMaxScaler as __minmax
 from sklearn.preprocessing import StandardScaler as __standard
 
 def copy (a_data) :
@@ -41,7 +41,7 @@ def normalize (a_data,a_column,b_method='MinMax') :
     Return directly to a_data[a_column]
     """
     if b_method == 'MinMax' :
-        loc_scaler = _minmax()
+        loc_scaler = __minmax()
         a_data[a_column] = loc_scaler.fit_transform(a_data[a_column])
     elif b_method == 'Standard' :
         loc_scaler = __standard()
