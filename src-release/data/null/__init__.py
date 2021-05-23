@@ -4,7 +4,7 @@ import pandas as __pd
 def count (a_data) :
     """
     Count null in dataframe.
-    You can also use a_data[a_column] of a_data[[a_column1,a_column2,...]]
+    You can also use a_data[a_column] or a_data[[a_column1,a_column2,...]]
     """
     return a_data.isnull().sum()
     
@@ -32,4 +32,11 @@ def replace (a_data,a_column,b_method='mean') :
     elif b_method == 'median' :
         a_data[a_column].fillna(a_data[a_column].median(),inplace=True)
     
+def replace_text (a_data,a_column,a_text) :
+    """
+    Replace null value (which stated by string or text) with another value.
+    This function has no return.
+    """
+    a_data[a_column].replace(a_text,__np.nan,inplace=True)
+    a_data[a_column].fillna(a_data[a_column].mode()[0],inplace=True)
     

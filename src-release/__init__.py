@@ -3,7 +3,7 @@ from . import chart
 from . import ml
 from . import statmodel
 
-from pkg_resources import get_distribution
+from pkg_resources import get_distribution as __dist
 
-__version__ = get_distribution('anoapycore').version
-
+def version () :
+    return __dist('anoapycore').version
