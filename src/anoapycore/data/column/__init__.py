@@ -1,5 +1,3 @@
-from . import value
-
 def count (a_dataframe) :
     return len(a_dataframe.columns)    
     
@@ -14,5 +12,3 @@ def delete (a_dataframe,a_column) :
 def list_ (a_dataframe) :
     return list(a_dataframe)
     
-def select (a_dataframe,a_column) :
-    return a_dataframe[a_column]

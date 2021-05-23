@@ -46,4 +46,35 @@ def normalize (a_data,a_column,b_method='MinMax') :
     elif b_method == 'Standard' :
         loc_scaler = __standard()
         a_data[a_column] = loc_scaler.fit_transform(a_data[a_column])
+        
+def map (a_data,a_column,a_old,a_new) :
+    """
+    Map value a_old of a_column in a_data with a_new
+    Use [] in a_old and a_new
+    a_new must match in length with a_old
+    """
+    loc_new_data = a_data
+    a_data[a_column].replace(a_old,a_new,inplace=True)
+
+def unique (a_data,a_column) :
+    """
+    Get unique value of a_column in a_data (for int or float data type only)
+    """
+    return list(__np.unique(a_data[a_column]))
+        
+def select (a_data,a_column) :
+    """
+    Select a_column in a_data
+    Use [] in a_column
+    """
+    return a_data[a_column]
+        
+def deselect (a_data,a_column) :
+    """
+    Not to select a_column in a_data
+    Get remaining columns
+    Use [] in a_column
+    """
+    loc_data = a_data.drop(a_column,axis = 1)    
+    return loc_data
 
