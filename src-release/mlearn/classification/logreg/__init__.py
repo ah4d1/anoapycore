@@ -3,10 +3,11 @@ import sklearn.metrics as __metrics
 import matplotlib.pyplot as __plt
 import pandas as __pd
 
+import anoapycore as __ap
+
 class __result :
     model = None
-    accuracy_train = None
-    accuracy_test = None
+    evals = {}
     report = None
     roc_chart = None
 
@@ -17,22 +18,19 @@ class __result_predict :
 def run (a_x_train,a_x_test,a_y_train,a_y_test,b_solver='lbfgs',b_max_iter=1000) :
     loc_model = __log_reg.LogisticRegression(solver=b_solver,max_iter=b_max_iter) # load library
     loc_model.fit(a_x_train,a_y_train) # create a model
-    
-    loc_accuracy_train = loc_model.score(a_x_train,a_y_train) 
-    loc_accuracy_test = loc_model.score(a_x_test,a_y_test) 
-    # predictor.score(X,Y) internally calculates Y'=predictor.predict(X) and then compares Y' against Y to give an accuracy measure
-    
-    loc_prediction = loc_model.predict(a_x_test) # prediction of y by the model
-    loc_report = __metrics.classification_report(a_y_test,loc_prediction)
+       
+    loc_predic_train = loc_model.predict(a_x_train)
+    loc_predic_test = loc_model.predict(a_x_test)
+    loc_report = __metrics.classification_report(a_y_test,loc_predic_test)
     
     loc_fpr, loc_tpr, loc_thresholds = __metrics.roc_curve(a_y_test, loc_model.predict_proba(a_x_test)[:,1])
     # false positive rate, true positive rate
     
-    loc_roc_chart = __roc(a_y_test,loc_prediction,loc_fpr,loc_tpr)
+    loc_roc_chart = __roc(a_y_test,loc_predic_test,loc_fpr,loc_tpr)
     loc_result = __result()
     loc_result.model = loc_model
-    loc_result.accuracy_train = loc_accuracy_train
-    loc_result.accuracy_test = loc_accuracy_test
+    loc_result.evals['train'] = __ap.__eval.evals(a_y_train.to_numpy(),loc_predic_train)
+    loc_result.evals['test'] = __ap.__eval.evals(a_y_test.to_numpy(),loc_predic_test)
     loc_result.report = loc_report # print(report)
     loc_result.roc_chart = loc_roc_chart # roc_chart.show()
     return loc_result
