@@ -1,3 +1,1 @@
-# stat_model
-
-from . import linear_regression
+from . import linreg # linear_regression

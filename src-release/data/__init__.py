@@ -16,6 +16,9 @@ import anoapycore as __ap
 def array_to_df (a_array) :
     return __pd.DataFrame(a_array)
 
+def array_to_str (a_array,b_delimiter=' ') :
+    return b_delimiter.join(a_array)
+
 def copy (a_data) :
     """
     This function is aimed to copy one dataframe to another dataframe.

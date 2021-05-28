@@ -20,7 +20,7 @@ def run (a_x,a_y) :
 
     loc_parameters = {'max_depth':range(3,20)}
 
-    loc_model = __gridscv(__model(),loc_parameters,n_jobs=-1)
+    loc_model = __gridscv(__model(),loc_parameters,n_jobs=1)
     loc_model.fit(a_x,a_y)
     loc_predict = loc_model.predict(a_x)
     
