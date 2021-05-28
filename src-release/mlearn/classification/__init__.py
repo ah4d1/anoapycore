@@ -1,4 +1,6 @@
 from . import dectree # decision tree classifier
+from . import gradboost # gradient boosting classifier
+from . import knn # k-nearest neighbors classifier
 from . import logreg # logistic_regression
 from . import randforest # random forest classifier
 from . import svc # support_vector_classifier
