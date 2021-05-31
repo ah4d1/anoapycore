@@ -1,19 +1,5 @@
-import anoapycore as __ap
-from sklearn.ensemble import GradientBoostingClassifier as __model
-
-def run (a_x_train,a_x_test,a_y_train,a_y_test,b_n_estimators=100,b_learning_rate=1.0,b_max_depth=1,b_threshold=0.5) :
-    loc_model = __model(n_estimators=b_n_estimators,learning_rate=b_learning_rate,max_depth=b_max_depth,random_state=0)
-    return __ap.mlearn.classification.__template.__run(loc_model,a_x_train=a_x_train,a_x_test=a_x_test,a_y_train=a_y_train,a_y_test=a_y_test,b_threshold=b_threshold)
-
-def predict (a_model,a_data,b_features='',b_threshold=0.5) :
-    return __ap.mlearn.classification.__template.__predict(a_model=a_model,a_data=a_data,b_features=b_features,b_threshold=b_threshold)
-
-
-'''
-
-
-from sklearn.ensemble import GradientBoostingClassifier as __model
 import sklearn.metrics as __metrics
+import matplotlib.pyplot as __plt
 import pandas as __pd
 
 import anoapycore as __ap
@@ -22,17 +8,19 @@ class __result :
     model = None
     evals = {}
     report = None
+    roc_chart = None
 
 class __result_predict :
     probability = None
     prediction = None # target value prediction
     worksheet = None # features data and target value prediction
 
-def run (a_x_train,a_x_test,a_y_train,a_y_test,b_estimators=100,b_learning_rate=1.0,b_max_depth=1,b_threshold=0.5) :
-
-    loc_model = __model(n_estimators=b_estimators,learning_rate=b_learning_rate,max_depth=b_max_depth,random_state=0)
+def __run (a_model,a_x_train,a_x_test,a_y_train,a_y_test,b_threshold=0.5) :
+    # loc_model = __model(solver=b_solver,max_iter=b_max_iter) # load library
+    
+    loc_model = a_model
     loc_model.fit(a_x_train,a_y_train)
-
+       
     # 0.1.19 begin
     
     loc_prob_train = loc_model.predict_proba(a_x_train)[:,1]
@@ -49,25 +37,42 @@ def run (a_x_train,a_x_test,a_y_train,a_y_test,b_estimators=100,b_learning_rate=
 
     # loc_predic_train = loc_model.predict(a_x_train)
     # loc_predic_test = loc_model.predict(a_x_test)
-    
-    # 0.1.19 end
-        
-    loc_report = __metrics.classification_report(a_y_test,loc_predic_test)
 
+    # 0.1.19 end
+    
+    loc_report = __metrics.classification_report(a_y_test,loc_predic_test)
+    
+    # false positive rate, true positive rate
+    loc_fpr, loc_tpr, loc_thresholds = __metrics.roc_curve(a_y_test, loc_model.predict_proba(a_x_test)[:,1])
+    loc_roc_chart = __roc(a_y_test,loc_predic_test,loc_fpr,loc_tpr)
+    
     loc_result = __result()
     loc_result.model = loc_model
     loc_result.evals['train'] = __ap.__eval.evals(a_y_train.to_numpy(),loc_predic_train)
     loc_result.evals['test'] = __ap.__eval.evals(a_y_test.to_numpy(),loc_predic_test)
     loc_result.report = loc_report # print(report)
-    
+    loc_result.roc_chart = loc_roc_chart # roc_chart.show()
     return loc_result
 
-def predict (a_model,a_data,a_features='',b_threshold=0.5) :
+def __roc (a_y_test,a_y_pred,a_fpr,a_tpr) :
+    loc_logit_roc_auc = __metrics.roc_auc_score(a_y_test,a_y_pred)
+    loc_plot = __plt.figure()
+    __plt.plot(a_fpr,a_tpr,label='Area = %0.2f' % loc_logit_roc_auc)
+    __plt.plot([0, 1], [0, 1],'r--')
+    __plt.xlim([0.0, 1.0])
+    __plt.ylim([0.0, 1.05])
+    __plt.xlabel('False Positive Rate')
+    __plt.ylabel('True Positive Rate')
+    __plt.title('Receiver Operating Characteristic')
+    __plt.legend(loc="lower right")
+    __plt.close()
+    return loc_plot
 
-    if a_features == '' :
+def __predict (a_model,a_data,b_features='',b_threshold=0.5) :
+    if b_features == '' :
         loc_features = a_data.columns
     else :
-        loc_features = a_features
+        loc_features = b_features
         
     # 0.1.19 begin
 
@@ -90,6 +95,4 @@ def predict (a_model,a_data,a_features='',b_threshold=0.5) :
     loc_result_predict.probability = loc_probability
     loc_result_predict.prediction = loc_prediction
     loc_result_predict.worksheet = loc_merge
-    
     return loc_result_predict
-'''
