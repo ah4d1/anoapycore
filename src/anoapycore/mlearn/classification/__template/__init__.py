@@ -89,7 +89,7 @@ def __roc (a_y_test,a_y_pred,a_fpr,a_tpr,a_ix) :
 def __precision_recall_curve (a_precision,a_recall,a_ix) :
     loc_plot = __plt.figure()
     __plt.plot(a_recall,a_precision,marker='.',label='Plot')
-    __plt.scatter(a_recall[a_ix],a_recall[a_ix],marker='o',color='black',label='Best')
+    __plt.scatter(a_recall[a_ix],a_precision[a_ix],marker='o',color='black',label='Best')
     __plt.xlabel('Recall')
     __plt.ylabel('Precision')
     __plt.title('Precision-Recall Curve')
