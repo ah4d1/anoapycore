@@ -1,29 +1,36 @@
 import sklearn.metrics as __metrics
 import matplotlib.pyplot as __plt
+import scikitplot as __skplt
 import pandas as __pd
 import numpy as __np
 
 import anoapycore as __ap
+
+
+class __data :
+    y_test_actual = None
+    y_test_pred = None
+    y_test_pred_proba_all = None
+    fpr = None # false positive rate
+    tpr = None # true positive rate
+    ix_roc = None # index fpr & tpr
+    best_threshold = None
+    prc_precisions = None
+    prc_recalls = None
+    prc_fscores = None
+    prc_thresholds = None
 
 class __best_threshold :
     value : None
     precision = None
     recall = None
 
-class __pr :
-    curve = None
-    best_threshold = None
-    precision = None
-    recall = None
-    data = None
-
 class __result :
     model = None
     evals = {}
     report = None
     best_threshold = None
-    roc_chart = None
-    pr = None # precision-recall curve
+    data = None
 
 class __result_predict :
     probability = None
@@ -49,27 +56,19 @@ def __run (a_model,a_x_train,a_x_test,a_y_train,a_y_test,b_threshold=0.5) :
 
     loc_report = __metrics.classification_report(a_y_test,loc_predic_test)
     
+    loc_predict_proba_all = loc_model.predict_proba(a_x_test)
     loc_predict_proba = loc_model.predict_proba(a_x_test)[:,1]
     # calculate roc curves : false positive rate, true positive rate
     loc_fpr, loc_tpr, loc_thresholds = __metrics.roc_curve(a_y_test,loc_predict_proba)
     # calculate the g-mean for each threshold
     loc_gmeans = __np.sqrt(loc_tpr * (1-loc_fpr))
     # locate the index of the largest g-mean
-    ix = __np.argmax(loc_gmeans)
-    loc_best_threshold = loc_thresholds[ix]
-    loc_roc_chart = __roc(a_y_test,loc_predic_test,loc_fpr,loc_tpr,ix)
+    ix_roc = __np.argmax(loc_gmeans)
+    loc_best_threshold = loc_thresholds[ix_roc]
     
     # calculate prc (precision-recall curve)
-    loc_precision,loc_recall,loc_thresholds = __metrics.precision_recall_curve(a_y_test,loc_predict_proba)
-    # convert to f score
-    loc_fscore = (2 * loc_precision * loc_recall) / (loc_precision + loc_recall)
-    loc_fscore_df = __ap.data.array_to_df(loc_fscore,['fscore'])
-    loc_thresholds_df = __ap.data.array_to_df(loc_thresholds,['threshold'])
-    # locate the index of the largest f score
-    ix = __np.argmax(loc_fscore)
-    loc_prc_best_threshold = loc_thresholds[ix]
-    loc_best_fscore = loc_fscore[ix]
-    loc_pr_curve = __precision_recall_curve(loc_precision,loc_recall,ix)
+    loc_prc_precisions,loc_prc_recalls,loc_prc_thresholds = __metrics.precision_recall_curve(a_y_test,loc_predict_proba)
+    loc_prc_fscores = (2 * loc_prc_precisions * loc_prc_recalls) / (loc_prc_precisions + loc_prc_recalls)
         
     loc_result = __result()
     loc_result.model = loc_model
@@ -77,42 +76,20 @@ def __run (a_model,a_x_train,a_x_test,a_y_train,a_y_test,b_threshold=0.5) :
     loc_result.evals['test'] = __ap.__eval.evals(a_y_test.to_numpy(),loc_predic_test)
     loc_result.report = loc_report
     loc_result.best_threshold = loc_best_threshold
-    loc_result.roc_chart = loc_roc_chart
     
-    loc_result.pr = __pr() # precision-result
-    loc_result.pr.curve = loc_pr_curve
-    loc_result.pr.best_threshold = loc_prc_best_threshold
-    loc_result.pr.best_fscore = loc_best_fscore
-    loc_result.pr.precisions = __ap.data.array_to_df(loc_precision,['precision'])
-    loc_result.pr.recalls = __ap.data.array_to_df(loc_recall,['recall'])
-    loc_result.pr.data = __ap.data.merge(loc_result.pr.precisions,loc_result.pr.recalls,loc_fscore_df,loc_thresholds_df)
+    loc_result.data = __data()
+    loc_result.data.y_test_actual = a_y_test
+    loc_result.data.y_test_pred = loc_predic_test
+    loc_result.data.y_test_pred_proba_all = loc_predict_proba_all
+    loc_result.data.fpr = loc_fpr # false positive rate
+    loc_result.data.tpr = loc_tpr # true positive rate
+    loc_result.data.ix_roc = ix_roc # index fpr & tpr
+    loc_result.data.prc_precisions = loc_prc_precisions
+    loc_result.data.prc_recalls = loc_prc_recalls
+    loc_result.data.prc_fscores = loc_prc_fscores
+    loc_result.data.prc_thresholds = loc_prc_thresholds
+
     return loc_result
-
-def __roc (a_y_test,a_y_pred,a_fpr,a_tpr,a_ix) :
-    loc_logit_roc_auc = __metrics.roc_auc_score(a_y_test,a_y_pred)
-    loc_plot = __plt.figure()
-    __plt.plot(a_fpr,a_tpr,label='Area = %0.2f' % loc_logit_roc_auc)
-    __plt.plot([0, 1], [0, 1],'r--')
-    __plt.scatter(a_fpr[a_ix],a_tpr[a_ix],marker='o',color='black',label='Best')
-    __plt.xlim([0.0, 1.0])
-    __plt.ylim([0.0, 1.05])
-    __plt.xlabel('False Positive Rate')
-    __plt.ylabel('True Positive Rate')
-    __plt.title('Receiver Operating Characteristic')
-    __plt.legend(loc="lower right")
-    __plt.close()
-    return loc_plot
-
-def __precision_recall_curve (a_precision,a_recall,a_ix) :
-    loc_plot = __plt.figure()
-    __plt.plot(a_recall,a_precision,marker='.',label='Plot')
-    __plt.scatter(a_recall[a_ix],a_precision[a_ix],marker='o',color='black',label='Best')
-    __plt.xlabel('Recall')
-    __plt.ylabel('Precision')
-    __plt.title('Precision-Recall Curve')
-    __plt.legend(loc="upper right")
-    __plt.close()
-    return loc_plot
 
 def __predict (a_model,a_data,b_features='',b_threshold=0.5) :
     if b_features == '' :
@@ -138,3 +115,5 @@ def __predict (a_model,a_data,b_features='',b_threshold=0.5) :
     loc_result_predict.prediction = loc_prediction
     loc_result_predict.worksheet = loc_merge
     return loc_result_predict
+
+
