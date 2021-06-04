@@ -13,8 +13,15 @@ from imblearn.over_sampling import SMOTE as __smote
 
 import anoapycore as __ap
 
-def array_to_df (a_array) :
-    return __pd.DataFrame(a_array)
+def array_to_df (a_array,b_as_column='') :
+    """
+    This will convert array to pandas dataframe
+    """
+    if b_as_column == '' :
+        loc_result = __pd.DataFrame(data=a_array)
+    else :
+        loc_result = __pd.DataFrame(data=a_array,columns=b_as_column)
+    return loc_result
 
 def array_to_str (a_array,b_delimiter=' ') :
     return b_delimiter.join(a_array)
@@ -63,11 +70,17 @@ def map (a_data,a_column,a_old,a_new) :
     loc_new_data = a_data
     a_data[a_column].replace(a_old,a_new,inplace=True)
 
-def merge (a_data_1,a_data_2) :
+def merge (*a_data) :
     """
-    Merge 2 dataframes by index
+    Merge dataframes by index
     """
-    loc_new_df = __pd.merge(a_data_1,a_data_2,left_index=True,right_index=True)
+    i = 0
+    for loc_data in a_data :
+        i += 1
+        if i == 1 :
+            loc_new_df = loc_data
+        else :
+            loc_new_df = __pd.merge(loc_new_df,loc_data,left_index=True,right_index=True)
     return loc_new_df
 
 def normalize (a_data,a_column,b_method='MinMax') :
@@ -100,7 +113,7 @@ def select (a_data,a_column) :
     """
     return a_data[a_column]
         
-def select_by_value (a_data,a_value) :
+def select_by_value (a_data,a_column,a_value) :
     return a_data.loc[a_data[a_column] == a_value]
         
 def smote (a_x,a_y) :

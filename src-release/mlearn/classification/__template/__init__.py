@@ -5,15 +5,25 @@ import numpy as __np
 
 import anoapycore as __ap
 
+class __best_threshold :
+    value : None
+    precision = None
+    recall = None
+
+class __pr :
+    curve = None
+    best_threshold = None
+    precision = None
+    recall = None
+    data = None
+
 class __result :
     model = None
     evals = {}
     report = None
     best_threshold = None
     roc_chart = None
-    pr_curve = None # precision-recall curve
-    prc_best_threshold = None # precision-recall curve threshold
-    prc_best_fscore = None
+    pr = None # precision-recall curve
 
 class __result_predict :
     probability = None
@@ -53,12 +63,14 @@ def __run (a_model,a_x_train,a_x_test,a_y_train,a_y_test,b_threshold=0.5) :
     loc_precision,loc_recall,loc_thresholds = __metrics.precision_recall_curve(a_y_test,loc_predict_proba)
     # convert to f score
     loc_fscore = (2 * loc_precision * loc_recall) / (loc_precision + loc_recall)
+    loc_fscore_df = __ap.data.array_to_df(loc_fscore,['fscore'])
+    loc_thresholds_df = __ap.data.array_to_df(loc_thresholds,['threshold'])
     # locate the index of the largest f score
     ix = __np.argmax(loc_fscore)
     loc_prc_best_threshold = loc_thresholds[ix]
     loc_best_fscore = loc_fscore[ix]
     loc_pr_curve = __precision_recall_curve(loc_precision,loc_recall,ix)
-    
+        
     loc_result = __result()
     loc_result.model = loc_model
     loc_result.evals['train'] = __ap.__eval.evals(a_y_train.to_numpy(),loc_predic_train)
@@ -66,9 +78,14 @@ def __run (a_model,a_x_train,a_x_test,a_y_train,a_y_test,b_threshold=0.5) :
     loc_result.report = loc_report
     loc_result.best_threshold = loc_best_threshold
     loc_result.roc_chart = loc_roc_chart
-    loc_result.pr_curve = loc_pr_curve
-    loc_result.prc_best_threshold = loc_prc_best_threshold
-    loc_result.prc_best_fscore = loc_best_fscore
+    
+    loc_result.pr = __pr() # precision-result
+    loc_result.pr.curve = loc_pr_curve
+    loc_result.pr.best_threshold = loc_prc_best_threshold
+    loc_result.pr.best_fscore = loc_best_fscore
+    loc_result.pr.precisions = __ap.data.array_to_df(loc_precision,['precision'])
+    loc_result.pr.recalls = __ap.data.array_to_df(loc_recall,['recall'])
+    loc_result.pr.data = __ap.data.merge(loc_result.pr.precisions,loc_result.pr.recalls,loc_fscore_df,loc_thresholds_df)
     return loc_result
 
 def __roc (a_y_test,a_y_pred,a_fpr,a_tpr,a_ix) :
