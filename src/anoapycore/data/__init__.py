@@ -116,14 +116,7 @@ def select (a_data,a_column) :
     Use [] in a_column
     """
     return a_data[a_column]
-        
-def select_by_index (a_data,a_index) :
-    loc_data_as_series = a_data.iloc[a_index]
-    return __ap.data.series_to_array(loc_data_as_series)
-        
-def select_by_value (a_data,a_column,a_value) :
-    return a_data.loc[a_data[a_column] == a_value]
-
+                
 def series_to_array (a_series) :
     return a_series.to_frame().T
 
@@ -132,7 +125,7 @@ def show (a_data,a_index_begin,a_index_end) :
     for i in range(0,len(a_data)) :
         if i >= a_index_begin and i <= a_index_end :
             x += 1
-            loc_this_df = __ap.data.select_by_index(a_data=a_data,a_index=i)
+            loc_this_df = __ap.data.row.select.index(a_data=a_data,a_index=i)
             if x == 1 :
                 loc_new_data = loc_this_df
             else :
