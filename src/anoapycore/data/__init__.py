@@ -125,7 +125,7 @@ def show (a_data,a_index_begin,a_index_end) :
     for i in range(0,len(a_data)) :
         if i >= a_index_begin and i <= a_index_end :
             x += 1
-            loc_this_df = __ap.data.row.select.index(a_data=a_data,a_index=i)
+            loc_this_df = __ap.data.row.index(a_data=a_data,a_index=i)
             if x == 1 :
                 loc_new_data = loc_this_df
             else :
