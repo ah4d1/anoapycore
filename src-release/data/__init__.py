@@ -16,6 +16,7 @@ import anoapycore as __ap
 def array_to_df (a_array,b_as_column='') :
     """
     This will convert array to pandas dataframe
+    use [] for b_as_column
     """
     if b_as_column == '' :
         loc_result = __pd.DataFrame(data=a_array)
@@ -32,6 +33,9 @@ def copy (a_data) :
     This will prevent a dataframe to be affected by another dataframe.
     """
     return a_data.copy()
+
+def dict_to_array (a_dict) :
+    return list(a_dict.items())
 
 def df_to_array (a_data) :
     return a_data.to_numpy()
@@ -113,9 +117,28 @@ def select (a_data,a_column) :
     """
     return a_data[a_column]
         
+def select_by_index (a_data,a_index) :
+    loc_data_as_series = a_data.iloc[a_index]
+    return __ap.data.series_to_array(loc_data_as_series)
+        
 def select_by_value (a_data,a_column,a_value) :
     return a_data.loc[a_data[a_column] == a_value]
-        
+
+def series_to_array (a_series) :
+    return a_series.to_frame().T
+
+def show (a_data,a_index_begin,a_index_end) :
+    x = 0
+    for i in range(0,len(a_data)) :
+        if i >= a_index_begin and i <= a_index_end :
+            x += 1
+            loc_this_df = __ap.data.select_by_index(a_data=a_data,a_index=i)
+            if x == 1 :
+                loc_new_data = loc_this_df
+            else :
+                loc_new_data = __ap.data.union(loc_new_data,loc_this_df)
+    return loc_new_data
+            
 def smote (a_x,a_y) :
     loc_smote = __smote()
     loc_x = __ap.data.df_to_array(a_x)
@@ -125,3 +148,17 @@ def smote (a_x,a_y) :
     loc_y_smote = __ap.data.array_to_df(loc_y_smote)
     return loc_x_smote,loc_y_smote
         
+def union (*a_data) :
+    x = 0
+    for loc_data in a_data :
+        x += 1
+        if x == 1 :
+            loc_new_data = loc_data
+        else :
+            loc_new_data = __pd.concat([loc_new_data,loc_data])
+    return loc_new_data
+    
+    
+    
+    
+    

@@ -35,3 +35,4 @@ def gmeans (a_model) :
 def best_threshold (a_model) :
     return loc_thresholds[ix_roc]
     return a_model.data.thresholds[__np.argmax(a_model.data.fscores)]
+
