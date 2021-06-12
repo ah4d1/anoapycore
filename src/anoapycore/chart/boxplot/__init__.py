@@ -1,3 +1,4 @@
+import pandas as __pd
 import matplotlib.pyplot as __plt
 import seaborn as __sns
 
@@ -19,6 +20,10 @@ def show (a_data,a_column) :
     loc_data.iqr = loc_data.q3 - loc_data.q1
     loc_data.lower_fence = loc_data.q1 - (1.5 * loc_data.iqr)
     loc_data.upper_fence = loc_data.q3 + (1.5 * loc_data.iqr)
+    loc_data_to_report = {'key': ['Q1','Q2','Q3','IQR','Lower Fence','Upper Fence'], \
+        'value':[loc_data.q1,loc_data.q2,loc_data.q3,loc_data.iqr,loc_data.lower_fence,loc_data.upper_fence]} 
+    loc_data.report = __pd.DataFrame(loc_data_to_report)
+    '''
     loc_data.report = "" + \
         "Q1 : " + str(loc_data.q1) + "\n" + \
         "Q2 : " + str(loc_data.q2) + "\n" + \
@@ -26,6 +31,7 @@ def show (a_data,a_column) :
         "IQR : " + str(loc_data.iqr) + "\n" + \
         "Lower Fence : " + str(loc_data.lower_fence) + "\n" + \
         "Upper Fence : " + str(loc_data.upper_fence)
+    '''
     return loc_plot,loc_data
 
 def shows (a_data,a_column_x,a_column_y,b_group_by='',b_orientation='') :

@@ -3,6 +3,7 @@ from . import load
 from . import null
 from . import row
 from . import save
+from . import series
 from . import stat
 from . import value
 
@@ -117,9 +118,6 @@ def select (a_data,a_column) :
     """
     return a_data[a_column]
                 
-def series_to_array (a_series) :
-    return a_series.to_frame().T
-
 def show (a_data,a_index_begin,a_index_end) :
     x = 0
     for i in range(0,len(a_data)) :

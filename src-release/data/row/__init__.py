@@ -1,6 +1,7 @@
 import numpy as __np
-
 import anoapycore as __ap
+from . import __index
+from . import __value
 
 def count (a_data) :
     return len(a_data)    
@@ -13,21 +14,33 @@ def index (a_data,a_index) :
     '''
     Show row by index
     '''
-    loc_data_as_series = a_data.iloc[a_index]
-    return __ap.data.series_to_array(loc_data_as_series)
-    
-def value (a_data,a_column,a_value,b_method='exact') :
+    if type(a_index) == int or type(a_index) == __np.int64:
+        loc_return = __index.int_(a_data,a_index)
+    elif type(a_index) == list :
+        loc_return = __index.list_(a_data,a_index)
+    return loc_return
+
+def value (a_data,a_column,a_value,b_method='=') :
     '''
     Show row by value of column
     '''
-    if b_method == 'exact' :
-        loc_return = a_data.loc[a_data[a_column] == a_value]
+    if b_method == '=' :
+        if type(a_value) != list :
+            loc_return = __value.eq_not_list(a_data,a_column,a_value)
+        else : # list
+            loc_return = __value.eq_list(a_data,a_column,a_value)
+    elif b_method == '>' : # greater than
+        loc_return = __value.gt(a_data,a_column,a_value)    
+    elif b_method == '>=' : # greater than or equal to
+        loc_return = __value.ge(a_data,a_column,a_value)    
+    elif b_method == '<' : # less than
+        loc_return = __value.lt(a_data,a_column,a_value)    
+    elif b_method == '<=' : # less than or equal to
+        loc_return = __value.le(a_data,a_column,a_value)    
     elif b_method == 'nearest' :
-        loc_array = __ap.data.df_to_array(a_data[a_column])
-        loc_difference_array = __np.absolute(loc_array - a_value)
-        loc_index = loc_difference_array.argmin()
-        loc_row = __ap.data.row.index(a_data=a_data,a_index=loc_index)
-        loc_value = loc_row.at[loc_index,a_column]
-        loc_return = __ap.data.row.value(a_data=a_data,a_column=a_column,a_value=loc_value,b_method='exact')
+        if type(a_value) != list :
+            loc_return = __value.nearest_not_list (a_data,a_column,a_value)
+        else : # list
+            loc_return = __value.nearest_list (a_data,a_column,a_value)
     return loc_return
     
